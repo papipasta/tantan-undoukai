@@ -1311,7 +1311,7 @@ function itemFrom(c){ const h=x=>(!x||x==='transparent')?[255,255,255]:[1,3,5].m
 function isZorome(seed){ const t=String(Math.abs(seed>>>0)); return t.length>=3 && /^(\d)\1+$/.test(t); }
 function nameKey(s){ return s.normalize('NFKC').replace(/\s+/g,'').toLowerCase().replace(/[\u30a1-\u30f6]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); }
 function nameSeed(s){ let h=0x811c9dc5; for(const ch of 'tanuki:'+nameKey(s)){ h^=ch.codePointAt(0); h=Math.imul(h,0x01000193); } return h>>>0; }
-function generate(seed, keepLocks){
+function generate(seed, keepLocks, noSeason){
   const rnd = mulberry32(seed>>>0);
   const sel = {}, col = {};
   // 固定した項目を先に入れてから残りを抽選する。後ろのカテゴリが固定されていると、先に抽選した側が排他の相手を知らずに選んでしまう
@@ -1352,7 +1352,7 @@ function generate(seed, keepLocks){
   fixExclusions(sel, keepLocks?locks:{});
   { const L=M.schemes.filter(x=>x.late && !x.season && !x.hidden), nb=SCH_BASE.filter(x=>!x.hidden).length;   // 後から足した定番の配色: 配色セットが当たった子の一部を、末尾で差し替える
     if(fromBase && L.length && rnd()*(nb+L.length)<L.length){ const h=L[Math.floor(rnd()*L.length)]; for(const k of ROLES) if(!(keepLocks && locks['col_'+k])) col[k]=h[k]; } }
-  if(SEASON){   // 季節のおまかせ: 半分は季節の配色、4割は季節の柄（末尾で引くので、それより前の抽選は変わらない）
+  if(SEASON && !noSeason){   // 季節のおまかせ: 半分は季節の配色、4割は季節の柄（末尾で引くので、それより前の抽選は変わらない）
     const hs=M.schemes.filter(x=>x.season===SEASON.id);
     if(hs.length && rnd()<0.5){ const h=hs[Math.floor(rnd()*hs.length)]; for(const k of ROLES) if(!(keepLocks && locks['col_'+k])) col[k]=h[k]; }
     const hp=[]; PM_.forEach((p,i)=>{ if(p[2]===SEASON.id) hp.push(i); });
@@ -3704,7 +3704,7 @@ function cleanName(s) { return [...String(s || '').normalize('NFC').replace(/[\u
    ゲームでは 手持ち・背景回り・金銀以外の レアは つかわない（手持ちは わざや 武器と かさなるため） */
 function nameSeed(name) { return MKG.nameSeed(name); }
 function nameBase(name) {
-  const g = MKG.generate(nameSeed(name), false), sel = { ...g.sel };
+  const g = MKG.generate(nameSeed(name), false, true), sel = { ...g.sel };   /* 季節の配色・柄は つかわない：いつ あそんでも おなじ たぬき */
   for (const k of ['item_left', 'item_front', 'item_left_top', 'around', 'around2', 'around3', 'around4', 'around5', 'around6']) if (k in sel) sel[k] = 'none';
   /* うしろの 看板（ロゴの 背景）は 1枚絵の ための もの。走る たぬきの まわりに 浮くので 外す（胸の ロゴは のこす） */
   if (/^back_/.test(sel.logo || '')) { sel.logo = 'none'; sel.logo_top = 'none'; }
