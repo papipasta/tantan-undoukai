@@ -1,7 +1,8 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v90, version 1794919302-7434）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v91, version 1795166501-2229）
+- 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
   → 以後は game.html を直接、アサート付き置換（python）で直す。巨大行（画像base64）は読まない
@@ -26,6 +27,15 @@
 - 頭の「2P」札を画面内に収める／横画面の題字を万国旗の下へ／ルール札と種目札の幅をそろえる
 - メインの1行目の行間、はしるボタンの字、英語の題字の倍率（測って縮める）
 - fitRow: タブ・種目札・大会の札が枠に入らなければ並びごと字を下げる。英語の大会タブは Tourney、英語の種目名は2行
+
+## v91 で足したこと（バトルロワイヤル＝スマブラふう）
+- SMASH()=royale（タッグ戦も）。hit で hp ではなく f.pct が たまる。knock 時 launch() で ％に比例して ふっとぶ（f.fly）
+- 場外げきつい: fly 中に koA()/koB()（リング±26、かべの内側40）を こえたら smashKO()。のこり STOCK=3、0で out
+- げきつい後 f.gone=80（st='fall'で かくす）→ respawn() 空から。％の高い子は jab 以外でも knock（90%〜）
+- ためスマッシュ: jab を ながおし（inp.ph）→ act 'charge'→'smash'。AI と オートは inp.sm で ためる
+- 必殺技 doron（★4）・jizo（★9）。rivSp() で ライバルも 名前ハッシュで 使う。jizoCounter は hit の先頭
+- HUD: hudPct()、頭の札に ％（slotTag）、カードは「％　のこりN」。制限 royale 100秒・tag 90秒、STAR_T 調整
+- 検査: python3 tools/smash/sim.py index.html p10 3（AIで試合を回す）、tools/smash/shot_sm.py（必殺技を出して撮る）。test/season.js は v90 から 行番号ずれで こわれている
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
