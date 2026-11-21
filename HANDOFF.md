@@ -50,6 +50,10 @@
 - 撮る: python3 tools/smash/shot_ring.py index.html OUT ja 852x393
 - 必殺技メニューの点検（runall は中身なしで開くので別に回す）: python3 tools/smash/spmenu.py index.html OUT → TOTAL 0
 
+## 数字の目安（調整の前後で比べる）
+- python3 tools/smash/stats.py index.html p10 10 → 試合の長さ・決着・リング段・げきつい％・きりふだ玉の 出現/ゲット/発動
+- v93 の基準（10本）: 平均82.6秒（52〜110）、GAME SET 7 / TIME UP 3、げきつい10/試合、げきつい時の％ 中央103（11〜208）、玉 出現15・ゲット9・発動4
+
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
 
