@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v91, version 1795166501-2229）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v92, version 1795226241-17fd）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -36,6 +36,12 @@
 - 必殺技 doron（★4）・jizo（★9）。rivSp() で ライバルも 名前ハッシュで 使う。jizoCounter は hit の先頭
 - HUD: hudPct()、頭の札に ％（slotTag）、カードは「％　のこりN」。制限 royale 100秒・tag 90秒、STAR_T 調整
 - 検査: python3 tools/smash/sim.py index.html p10 3（AIで試合を回す）、tools/smash/shot_sm.py（必殺技を出して撮る）。test/season.js は v90 から 行番号ずれで こわれている
+
+## v92 で足したこと（大トリの 山場）
+- きりふだ玉 KIRI：stepKiri（kiriCD 18秒→以後22〜32秒ごと）。resolveHits で たたく→kiriHit→3回で f.kiri
+- さいごの きりふだ：doSpecial の先頭で f.kiri なら startFinal。FINAL.ph 'cut'（75f、tick を とめる・drawFinalCut）→'go'（stepFinal、ちゃがま5列を dl に まぜて drawFinal(i)）
+- GAME SET／TIME UP：GSET（drawGameSet）、決着で slowmo 100、カメラは lastKO へ。％は 殴られると ゆれる（pctShk）
+- 撮る: python3 tools/smash/shot_final.py index.html OUT ja 852x393,393x852
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
