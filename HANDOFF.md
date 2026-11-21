@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v96, version 1795304899-d8da）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v97, version 1795305097-c055）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -65,6 +65,7 @@
 ## v96 オープニングの たぬきは 毎回 くじ
 - omPrepare の lk：あなた（playerLook）以外は 毎回 randomSel(Math.random) で 新しく。ライバル山は uniformOf で ユニフォームを たもつ。なかまも くじ（SAVE.mates は 使わない）
 - くじの たぬき（look.once）は lookFor を 通さず bake 直接 → IndexedDB に ためない
+- v97: タイトルに ならぶ 4ひき（op.lineup）も 同じく くじ。共通の randLook(ti)・segsOnce(look) を opLoad の そばに 置いた（あなた＝まんなか i=2 は playerLook）
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）

@@ -6062,7 +6062,8 @@ async function opInit() {
   op.cv = $('op'); op.cv2 = $('op2'); op.fontsOk = true; fitOp();
   const r = rng((Math.random() * 1e9) | 0);
   buildRoster();
-  op.lineup = [0, 1, 2, 3].map(i => ({ i, isP: i === 2, look: i === 2 ? playerLook : memLook(ROSTER[[1, 2, 0, 3][i]][0]), segs: null, face: i === 3 ? -1 : 1 }));
+  /* タイトルに ならぶ 3びきも 毎回 くじ（山の ユニフォームは その山の まま）。まんなかの あなたは いつもの たぬき */
+  op.lineup = [0, 1, 2, 3].map(i => ({ i, isP: i === 2, look: i === 2 ? playerLook : randLook([1, 2, 0, 3][i]), segs: null, face: i === 3 ? -1 : 1 }));
   makeTeams(); setTimeout(async () => { const ms = ROSTER.flat().filter(m => !m.self); for (const m of ms) { await idleWait(); await lookFor(memLook(m), null); } for (const fc of ['happy', 'angry']) for (const m of ms) { await idleWait(); await lookFor(memLook(m), null, fc); await yieldFrame(); } }, 200);
   opLayoutLineup();
   await Promise.all(op.lineup.map(o => opLoad(o)));
@@ -6071,7 +6072,10 @@ async function opInit() {
   setTimeout(() => warmLooks(racers.map(x => x.look)), 1500);
 }
 function opLayoutLineup() { for (const o of op.lineup) { o.k = op.th * (o.isP ? 1.12 : 1) / 610; o.xT = op.cx + (o.i - 1.5) * op.gap; o.from = o.i < 3 ? -40 - (3 - o.i) * 26 : op.W + 40; } }
-async function opLoad(o) { o.segs = await lookFor(o.look, null); }
+async function opLoad(o) { o.segs = await segsOnce(o.look); }
+/* くじの たぬき：毎回 ちがうので 端末（IndexedDB）には とっておかない */
+function randLook(ti) { const sd = (Math.random() * 1e9) | 0, L = mkLook(ti === 0 ? randomSel(sd) : uniformOf(ti, randomSel(sd))); L.once = true; return L; }
+const segsOnce = look => look.once ? bake({ ...look.sel, item_front: 'none', item_left: 'none' }, look.col) : lookFor(look, null);
 async function opSetPlayer() { const o = op.lineup[2]; o.look = playerLook; o.k = op.th * 1.12 / 610; await opLoad(o); o.cheer = 40; }
 
 function pcircle(g, cx, cy, r, col) { g.fillStyle = col; for (let dy = -r; dy <= r; dy++) { const w = Math.floor(Math.sqrt(r * r - dy * dy)); g.fillRect(cx - w, cy + dy, w * 2 + 1, 1); } }
@@ -6155,14 +6159,13 @@ async function omPrepare() {
   try { localStorage.setItem('tantan-om', p); } catch (e) { }
   OM.pat = p; OM.len = OM_LEN[p]; OM.t = 0;
   /* 出てくる たぬきは 毎回 くじで（あなた だけは いつもの たぬき）。山の ユニフォームは その山の まま */
-  const rs = () => (Math.random() * 1e9) | 0;
-  const lk = (ti, mi) => { const m = ROSTER[ti][mi]; if (m.self) return playerLook; const L = mkLook(ti === 0 ? randomSel(rs()) : uniformOf(ti, randomSel(rs()))); L.once = true; return L; };
+  const lk = (ti, mi) => ROSTER[ti][mi].self ? playerLook : randLook(ti);
   const rv = (SAVE.rival && SAVE.rival.team) || 1;
   const A = OM.A = { teams: [0, 1, 2, 3].map(ti => [0, 1, 2].map(mi => omActor(lk(ti, mi), mi === 0 ? 1.05 : 1, 1))), rv };
   A.me = omActor(playerLook, 1.1, 1); A.rvL = omActor(lk(rv, 0), 1.1, -1);
   const all = [...A.teams.flat(), A.me, A.rvL];
   /* くじの たぬきは 端末に とっておかない（毎回 ちがうので たまる いっぽうに なる） */
-  await Promise.all(all.map(async a => { a.segs = a.look.once ? await bake({ ...a.look.sel, item_front: 'none', item_left: 'none' }, a.look.col) : await lookFor(a.look, null); }));
+  await Promise.all(all.map(async a => { a.segs = await segsOnce(a.look); }));
   if (p === 2) await Promise.all(all.map(a => eyesOf(a.look)));
   /* 顔の アップ用：原寸（1080²）で 焼きなおす。ふだんの 半分の 絵を 何倍にも 引きのばすと 線が あれる */
   if (p === 1) for (const a of [A.me, A.rvL]) { try { a.hi = await bake({ ...a.look.sel, item_front: 'none', item_left: 'none' }, a.look.col, null, 1); } catch (e) { } }
