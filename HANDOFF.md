@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v92, version 1795226241-17fd）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v93, version 1795234837-f646）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -42,6 +42,12 @@
 - さいごの きりふだ：doSpecial の先頭で f.kiri なら startFinal。FINAL.ph 'cut'（75f、tick を とめる・drawFinalCut）→'go'（stepFinal、ちゃがま5列を dl に まぜて drawFinal(i)）
 - GAME SET／TIME UP：GSET（drawGameSet）、決着で slowmo 100、カメラは lastKO へ。％は 殴られると ゆれる（pctShk）
 - 撮る: python3 tools/smash/shot_final.py index.html OUT ja 852x393,393x852
+
+## v93 リング
+- RING は はじめから a=RING0(44)。RING_AT=[25,45,65]秒の 3秒前に 予告（RING.warn、つぎの はしを 点線＋うすい橙）→ RING_STEP(56)ずつ ちぢむ
+- SMASH では 歩いている子は リングの はしで とまる（physics の クランプ）。とばされた子（f.fly）だけ 外へ → koA/koB＝リング±24 で げきつい
+- アイテムの 落下も リングの内側。きりふだ玉の 初回は 30秒（リング予告と 実況が かぶらないよう）
+- 撮る: python3 tools/smash/shot_ring.py index.html OUT ja 852x393
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
