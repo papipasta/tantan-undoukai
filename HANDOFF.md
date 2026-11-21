@@ -48,6 +48,7 @@
 - SMASH では 歩いている子は リングの はしで とまる（physics の クランプ）。とばされた子（f.fly）だけ 外へ → koA/koB＝リング±24 で げきつい
 - アイテムの 落下も リングの内側。きりふだ玉の 初回は 30秒（リング予告と 実況が かぶらないよう）
 - 撮る: python3 tools/smash/shot_ring.py index.html OUT ja 852x393
+- 必殺技メニューの点検（runall は中身なしで開くので別に回す）: python3 tools/smash/spmenu.py index.html OUT → TOTAL 0
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
