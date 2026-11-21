@@ -2127,7 +2127,7 @@ const ARENA = () => MODE() === 'tama' || MODE() === 'royale' || MODE() === 'tug'
 /* ── スマブラふう（バトルロワイヤル）：なぐられると ％が たまり、たまるほど とおくへ ふっとぶ。
    リングの外まで とばされたら げきつい。のこり 3。0に なったら おしまい ── */
 const SMASH = () => MODE() === 'royale';
-const RING0 = 44, RING_STEP = 56, RING_AT = [25, 45, 65];   /* リングの はし・1回で ちぢむ はば・ちぢむ 秒 */
+const RING0 = 44, RING_STEP = 56, RING_AT = [25, 45, 60];   /* リングの はし・1回で ちぢむ はば・ちぢむ 秒 */
 let KIRI = null, FINAL = null, GSET = null, lastKO = null, kiriCD = 0;
 const STOCK = 3;
 const kbOf = (o, kb) => (o.bigT > 0 ? .55 : 1) * (kb || 1);
@@ -4440,7 +4440,7 @@ function hit(a, o, d, type) {
 /* ふっとばす：％が 多いほど とおく・たかく */
 function launch(o, dir, kb) {
   const p = o.pct || 0, m = kbOf(o, kb);
-  o.vx = dir * (2.4 + p * .05) * m; o.vy = Math.min(11, (3.6 + p * .034) * Math.sqrt(m)); o.fly = true;
+  o.vx = dir * (2.4 + p * .05) * m * (!RING || RING.step < 2 ? 1 : p < 70 ? .72 : RING.step >= 3 ? 1.18 : 1); o.vy = Math.min(11, (3.6 + p * .034) * Math.sqrt(m)); o.fly = true;
   if (p * m > 90 && (onScreen(o) || o.isP)) { hitstop = Math.max(hitstop, 9); shake = Math.max(shake, 6); pop(o, 'ズバーン', '#ff4a3a', 1); }
 }
 /* リングの外まで とんだら げきつい */

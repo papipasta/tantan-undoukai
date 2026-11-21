@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v93, version 1795234837-f646）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v94, version 1795270688-fd94）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -53,6 +53,8 @@
 ## 数字の目安（調整の前後で比べる）
 - python3 tools/smash/stats.py index.html p10 10 → 試合の長さ・決着・リング段・げきつい％・きりふだ玉の 出現/ゲット/発動
 - v93 の基準（10本）: 平均82.6秒（52〜110）、GAME SET 7 / TIME UP 3、げきつい10/試合、げきつい時の％ 中央103（11〜208）、玉 出現15・ゲット9・発動4
+- v94（10本）: リング RING_AT 65→60秒。launch の vx に倍率：リング2段目以降で ％<70 は ×0.72（早落ちを へらす）、3段目以降で ％≥70 は ×1.18（終盤を しめる）
+  → 平均82.6秒、GAME SET 8 / TIME UP 2、リング3段まで 8本、げきつい時の％ 中央103.5
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
