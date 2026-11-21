@@ -1102,10 +1102,12 @@ function loadOne(src) { return new Promise(res => { if (IMG[src]) return res(); 
 function srcsOf(sel) { const o = []; for (const c of CAT) { const it = c.items.find(i => i.id === sel[c.id]); if (it) { if (it.line) o.push(it.line); for (const f of it.fills) if (f.src) o.push(f.src); } } return o; }
 const tmp = document.createElement('canvas'); tmp.width = tmp.height = 1080 * BK;
 const tg = tmp.getContext('2d');
-function tint(img, color) {
-  const N = tmp.width, r = img._r || [0, 0, 1080, 1080], k = N / 1080; tg.globalCompositeOperation = 'source-over'; tg.clearRect(0, 0, N, N);
+const tmpBy = { [tmp.width]: tg };   /* 大写し用に 大きく焼くときは 別の まな板 */
+function tint(img, color, N0) {
+  const N = N0 || 1080 * BK; let tg = tmpBy[N]; if (!tg) { const c = document.createElement('canvas'); c.width = c.height = N; tg = tmpBy[N] = c.getContext('2d'); tg.imageSmoothingQuality = 'high'; }
+  const cvN = tg.canvas, r = img._r || [0, 0, 1080, 1080], k = N / 1080; tg.globalCompositeOperation = 'source-over'; tg.clearRect(0, 0, N, N);
   tg.drawImage(img, r[0] * k, r[1] * k, r[2] * k, r[3] * k); tg.globalCompositeOperation = 'source-in'; tg.fillStyle = color; tg.fillRect(0, 0, N, N);
-  tg.globalCompositeOperation = 'source-over'; return tmp;
+  tg.globalCompositeOperation = 'source-over'; return cvN;
 }
 function mixHex(a, b, t) { const h = x => [parseInt(x.slice(1, 3), 16), parseInt(x.slice(3, 5), 16), parseInt(x.slice(5, 7), 16)]; const A = h(a), B = h(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
 const lumHex = c => parseInt(c.slice(1, 3), 16) * .3 + parseInt(c.slice(3, 5), 16) * .59 + parseInt(c.slice(5, 7), 16) * .11;
@@ -1126,7 +1128,8 @@ function itemFromCol(c) { const h = x => (!x || x === 'transparent') ? [255, 255
 /* 絵の外形は 1/4 の大きさで調べる（全画素を読むと重い） */
 const probe = document.createElement('canvas'); probe.width = probe.height = 135;
 const probeG = probe.getContext('2d', { willReadFrequently: true });
-function cropCanvas(cv) {
+function cropCanvas(cv, bk) {
+  const BK0 = bk || BK;
   const N = cv.width, Q = probe.width, sc = N / Q;
   probeG.clearRect(0, 0, Q, Q); probeG.drawImage(cv, 0, 0, Q, Q);
   const d = probeG.getImageData(0, 0, Q, Q).data;
@@ -1137,7 +1140,7 @@ function cropCanvas(cv) {
   x1 = Math.min(N - 1, Math.ceil((x1 + 1) * sc) + 6); y1 = Math.min(N - 1, Math.ceil((y1 + 1) * sc) + 6);
   const o = document.createElement('canvas'); o.width = x1 - x0 + 1; o.height = y1 - y0 + 1;
   o.getContext('2d').drawImage(cv, -x0, -y0);
-  return { cv: o, ox: x0 / BK, oy: y0 / BK, w: o.width / BK, h: o.height / BK };
+  return { cv: o, ox: x0 / BK0, oy: y0 / BK0, w: o.width / BK0, h: o.height / BK0 };
 }
 const yieldFrame = () => new Promise(r => setTimeout(r, 0));
 /* 焼いた絵を 端末に とっておく（IndexedDB）。2回目からは 焼かずに すぐ出る */
@@ -1162,12 +1165,12 @@ function sprPut(key, segs) {
 /* 区画ごとに1枚に焼いておく（関節で回す単位）。区画ごとに いったん手を離して 画面を止めない */
 const condHit = (cond, sel) => cond.split('&').every(p => { const [cc, ii] = p.split(':'); return sel[cc] === ii; });
 function hiddenOf(sel) { return new Set((M.hides || []).filter(([cond]) => condHit(cond, sel)).map(h => h[1])); }
-let cutC = null; function cutCv() { if (!cutC) { cutC = document.createElement('canvas'); cutC.width = cutC.height = 1080 * BK; } return cutC; }
-async function bake(sel, col, only) {
+const cutC = {}; function cutCv(N) { N = N || 1080 * BK; if (!cutC[N]) { cutC[N] = document.createElement('canvas'); cutC[N].width = cutC[N].height = N; } return cutC[N]; }
+async function bake(sel, col, only, bk) {
   await Promise.all(srcsOf(sel).map(loadOne));
   if (sel.rare === 'gold' || sel.rare === 'gold_all') { col = { ...col, body: M.gold || '#f0c33c' }; if (sel.rare === 'gold_all') { col.trim = '#d8a020'; col.accent = '#ffe08a'; } }
   const out = [], hid = hiddenOf(sel);
-  const N = 1080 * BK; let t0 = performance.now();
+  const N = 1080 * (bk || BK); let t0 = performance.now();
   for (let si = 0; si < SEGS.length; si++) {
     if (only && !only.has(si)) continue;
     const seg = SEGS[si], its = [];
@@ -1176,16 +1179,16 @@ async function bake(sel, col, only) {
     if (!its.length) continue;
     const cv = document.createElement('canvas'); cv.width = cv.height = N;
     const g = cv.getContext('2d');
-    const paint = (dst, it) => { for (const f of it.fills) if (IMG[f.src]) dst.drawImage(tint(IMG[f.src], roleColor(col, f.role)), 0, 0); if (IMG[it.line]) dst.drawImage(tint(IMG[it.line], roleColor(col, it.lineRole || 'line')), 0, 0); };
+    const paint = (dst, it) => { for (const f of it.fills) if (IMG[f.src]) dst.drawImage(tint(IMG[f.src], roleColor(col, f.role), N), 0, 0); if (IMG[it.line]) dst.drawImage(tint(IMG[it.line], roleColor(col, it.lineRole || 'line'), N), 0, 0); };
     const same = kc => (JOINT[kc] || null) === seg.j;
     for (const [c, it] of its) {
       const ref = k => { const [kc, want] = k.split(':'); if (hid.has(kc) || !same(kc)) return null; const cc = CAT.find(x => x.id === kc), iid = sel[kc]; return cc && iid && iid !== 'none' && (!want || want === iid) ? cc.items.find(i => i.id === iid) : null; };
       const cutIts = [...((M.cuts || {})[c.id] || []), ...((M.cuts || {})[c.id + '/' + it.id] || [])].map(ref).filter(Boolean);
-      if (cutIts.length) { const cg = cutCv().getContext('2d'); cg.clearRect(0, 0, N, N); paint(cg, it); cg.globalCompositeOperation = 'destination-out'; for (const ci of cutIts) for (const src of [ci.line, ...ci.fills.map(f => f.src)]) if (IMG[src]) { const r = IMG[src]._r || [0, 0, 1080, 1080], k = N / 1080; cg.drawImage(IMG[src], r[0] * k, r[1] * k, r[2] * k, r[3] * k); } cg.globalCompositeOperation = 'source-over'; g.drawImage(cg.canvas, 0, 0); }
+      if (cutIts.length) { const cg = cutCv(N).getContext('2d'); cg.clearRect(0, 0, N, N); paint(cg, it); cg.globalCompositeOperation = 'destination-out'; for (const ci of cutIts) for (const src of [ci.line, ...ci.fills.map(f => f.src)]) if (IMG[src]) { const r = IMG[src]._r || [0, 0, 1080, 1080], k = N / 1080; cg.drawImage(IMG[src], r[0] * k, r[1] * k, r[2] * k, r[3] * k); } cg.globalCompositeOperation = 'source-over'; g.drawImage(cg.canvas, 0, 0); }
       else paint(g, it);
       for (const k of [...((M.raise || {})[c.id] || []), ...((M.raise || {})[c.id + '/' + it.id] || [])]) { const ri = ref(k); if (ri) paint(g, ri); }
     }
-    const c = cropCanvas(cv); if (c) out.push({ j: seg.j, si, ...c });
+    const c = cropCanvas(cv, bk); if (c) out.push({ j: seg.j, si, ...c });
     if (performance.now() - t0 > 10) { await yieldFrame(); t0 = performance.now(); }
   }
   return out;
@@ -6158,6 +6161,8 @@ async function omPrepare() {
   const all = [...A.teams.flat(), A.me, A.rvL];
   await Promise.all(all.map(async a => { a.segs = await lookFor(a.look, null); }));
   if (p === 2) await Promise.all(all.map(a => eyesOf(a.look)));
+  /* 顔の アップ用：原寸（1080²）で 焼きなおす。ふだんの 半分の 絵を 何倍にも 引きのばすと 線が あれる */
+  if (p === 1) for (const a of [A.me, A.rvL]) { try { a.hi = await bake({ ...a.look.sel, item_front: 'none', item_left: 'none' }, a.look.col, null, 1); } catch (e) { } }
 }
 function omStart() {
   if (navigator.webdriver && !window.__forceOM) return;   /* 自動テストでは 流さない */
@@ -6245,7 +6250,7 @@ function drawOM() {
         g.fillStyle = 'rgba(255,255,255,.18)'; for (let k = 0; k < 9; k++) g.fillRect(((k * 47 + t * 6 * dir) % (W + 60)) - 30, top + 8 + k * (hh / 9 | 0), 40, 1);
         g2.save(); g2.beginPath(); g2.rect(0, top + 4, W, hh - 8); g2.clip();
         const sc = (hh * .95) / 330, cx = W / 2 + dir * (1 - slide) * W;   /* 頭（絵の 520,360 あたり）を まんなかに */
-        g2.save(); g2.translate(Math.round(cx), top + hh * .56); g2.scale((dir > 0 ? -1 : 1) * sc, sc); g2.translate(-520, -360); rigSegs(g2, a.segs, { sh_r: -30, sh_l: 20 }); g2.restore();
+        g2.save(); g2.translate(Math.round(cx), top + hh * .56); g2.scale((dir > 0 ? -1 : 1) * sc, sc); g2.translate(-520, -360); rigSegs(g2, a.hi || a.segs, { sh_r: -30, sh_l: 20 }); g2.restore();
         g2.restore();
       }
       /* いなずま */

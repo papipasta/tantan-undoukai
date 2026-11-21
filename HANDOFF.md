@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v94, version 1795270688-fd94）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v95, version 1795303629-0596）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -55,6 +55,12 @@
 - v93 の基準（10本）: 平均82.6秒（52〜110）、GAME SET 7 / TIME UP 3、げきつい10/試合、げきつい時の％ 中央103（11〜208）、玉 出現15・ゲット9・発動4
 - v94（10本）: リング RING_AT 65→60秒。launch の vx に倍率：リング2段目以降で ％<70 は ×0.72（早落ちを へらす）、3段目以降で ％≥70 は ×1.18（終盤を しめる）
   → 平均82.6秒、GAME SET 8 / TIME UP 2、リング3段まで 8本、げきつい時の％ 中央103.5
+
+## v95 オープニングの 顔アップ（線が あれる → 直した）
+- ふだんの絵は BK=0.5（540²）で 焼く。顔アップは 端末で 1画素あたり 約4倍に 引きのばすので 荒れていた
+- bake(sel,col,only,bk) と tint(img,color,N)・cutCv(N)・cropCanvas(cv,bk) に 大きさを わたせるように。omPrepare で パターン1のとき A.me.hi / A.rvL.hi を bk=1（原寸1080²）で 焼き、アップは a.hi を 使う
+- 元の部品が 1080² なので bk を 1 より 上げても 細かくは ならない
+- 撮る: python3 tools/om_shot.py index.html OUT.png 1 330 393x852 2.75 （等倍で 切り出して 見る）
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
