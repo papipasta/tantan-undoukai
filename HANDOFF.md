@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v95, version 1795303629-0596）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v96, version 1795304899-d8da）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -61,6 +61,10 @@
 - bake(sel,col,only,bk) と tint(img,color,N)・cutCv(N)・cropCanvas(cv,bk) に 大きさを わたせるように。omPrepare で パターン1のとき A.me.hi / A.rvL.hi を bk=1（原寸1080²）で 焼き、アップは a.hi を 使う
 - 元の部品が 1080² なので bk を 1 より 上げても 細かくは ならない
 - 撮る: python3 tools/om_shot.py index.html OUT.png 1 330 393x852 2.75 （等倍で 切り出して 見る）
+
+## v96 オープニングの たぬきは 毎回 くじ
+- omPrepare の lk：あなた（playerLook）以外は 毎回 randomSel(Math.random) で 新しく。ライバル山は uniformOf で ユニフォームを たもつ。なかまも くじ（SAVE.mates は 使わない）
+- くじの たぬき（look.once）は lookFor を 通さず bake 直接 → IndexedDB に ためない
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
