@@ -78,13 +78,11 @@ def compose(kind, path, head, sub, k, n):
   if kind == 'end':
     bg = Image.open(path).convert('RGB').resize((W, H), Image.LANCZOS)
     im.paste(bg, (0, 0)); d = ImageDraw.Draw(im, 'RGBA'); a = ease(k / 10)
-    y0 = int(1060 + (1 - a) * 80)
-    d.rectangle((60, y0, W - 60, y0 + 600), fill=(18, 13, 42, 238), outline=(255, 255, 255), width=6)
-    y = y0 + 64
-    y += text_c(d, W / 2, y, 'ブラウザで すぐ あそべる', F_MED(76), GOLD) + 40
+    y0 = int(1200 + (1 - a) * 80)   # 動画の 中の URL は 押せないので のせない
+    d.rectangle((60, y0, W - 60, y0 + 400), fill=(18, 13, 42, 238), outline=(255, 255, 255), width=6)
+    y = y0 + 70
+    y += text_c(d, W / 2, y, 'ブラウザで すぐ あそべる', F_MED(76), GOLD) + 44
     y += text_c(d, W / 2, y, 'むりょう　スマホ・PC　日本語／English', F_REG(44), CREAM) + 64
-    y += text_c(d, W / 2, y, 'papipasta.itch.io', F_MED(64), CREAM) + 34
-    y += text_c(d, W / 2, y, '/tantan-undoukai', F_MED(64), CREAM) + 60
     text_c(d, W / 2, y, '水曜日のパピィー　@cookingpapi55', F_REG(40), LAV)
     return im
   # 横画面の ゲーム：まんなかに 1080x810
