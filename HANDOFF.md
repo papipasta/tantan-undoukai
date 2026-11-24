@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v97, version 1795305097-c055）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v98, version 1795496393-8f2b）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -66,6 +66,12 @@
 - omPrepare の lk：あなた（playerLook）以外は 毎回 randomSel(Math.random) で 新しく。ライバル山は uniformOf で ユニフォームを たもつ。なかまも くじ（SAVE.mates は 使わない）
 - くじの たぬき（look.once）は lookFor を 通さず bake 直接 → IndexedDB に ためない
 - v97: タイトルに ならぶ 4ひき（op.lineup）も 同じく くじ。共通の randLook(ti)・segsOnce(look) を opLoad の そばに 置いた（あなた＝まんなか i=2 は playerLook）
+
+## v98 リリース前の 点検（2026-11-24）
+- メニュー runall 日英×8サイズ TOTAL 0、spmenu TOTAL 0、全11種目＋きょうのおだい を 日英で 結果まで（エラー0）
+- 直した: 縦画面で カードを 出さないとき（320x568・375x667）実況の 札（#sayBar）が スティックと ボタンに かぶっていた → updBoard で パッドの いちばん上（top 6px）へ。重なりの 判定に 見えている #btns button の 上端も 入れた
+- 直した: 英語の 抜け「つよい #」「おに #」を 辞書に 追加
+- 道具（リポジトリの 一番上で 実行）: tools/en_miss.py（英語で 全部 開いて __trMiss を 集める）、tools/saybar.py（実況の 札と 操作部の 位置を 4サイズで 測る）、tools/first_run.py（はじめての 人の 流れを 撮る）
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）

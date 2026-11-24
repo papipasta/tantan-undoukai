@@ -1,0 +1,4 @@
+tools/out_*/
+tools/out_*.png
+tools/log_*.txt
+tools/done.flag
