@@ -1,7 +1,7 @@
 # たんたんたぬきの大運動会 — 引き継ぎ
 
 ## いまの最新
-- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v98, version 1795496393-8f2b）
+- 公開先: アーティファクト f899f4ed-edc6-4c0f-9363-ae783940ea61（v99, version 1795511476-5923）
 - 公開のしかた: list_files → publish_files（index.html をディスクから。edit_version より楽）
 - 正本: GitHub papipasta/tantan-undoukai の index.html（公開版と同一）。旧 src/ と build.py は失われた
 - 新しい環境では: add_repo → git clone --depth 1 → index.html を直す → edit_version で公開 → commit/push
@@ -72,6 +72,13 @@
 - 直した: 縦画面で カードを 出さないとき（320x568・375x667）実況の 札（#sayBar）が スティックと ボタンに かぶっていた → updBoard で パッドの いちばん上（top 6px）へ。重なりの 判定に 見えている #btns button の 上端も 入れた
 - 直した: 英語の 抜け「つよい #」「おに #」を 辞書に 追加
 - 道具（リポジトリの 一番上で 実行）: tools/en_miss.py（英語で 全部 開いて __trMiss を 集める）、tools/saybar.py（実況の 札と 操作部の 位置を 4サイズで 測る）、tools/first_run.py（はじめての 人の 流れを 撮る）
+
+## v99 リリースの 仕上げ（2026-11-24）
+- 直した: きろくの 窓に はじめての 人むけの ひとこと（#recEmpty）、英語「まだ」= Not yet、英語の 設定「ゆれ・ひかり」= Effects（値が 大きい字の まま 入る）、タイトルの 小見出し 2行めが 横長で 背の ひくい 画面（1200x630 など）で たぬきの 頭に かかる → 入らないときは 出さない
+- 頭に description・theme-color・favicon（64）・apple-touch-icon（180）を 埋めこみ。SHARE_URL = https://papipasta.itch.io/tantan-undoukai（itch の ページ名を これに する）
+- 配布物: release/（アイコン・カバー 630x500・OGP 1200x630 日英・スクショ 日英・itch 用 zip・宣伝ショート動画 30秒）
+- 作りかた（tools/promo/）: capture.py（ゲームの 時計を 1コマずつ 進めて 撮る。LAND= で 横の 大きさ、LANG_=en で 英語、NMAX で コマ数）→ music.py（ゲームの BGM を WAV に）→ make_video.py（縦 1080x1920・30fps・-14 LUFS）／ make_assets.py（release/ に 画像）。書体は tools/promo/fonts/（Zen Antique・Kiwi Maru・Zen Maru Gothic）
+- ストアの 文章（日英の 説明・操作表・itch の 設定値・X 告知文）は Claude の 文書「たんたんたぬきの大運動会 ストアページ一式」 https://claude.ai/artifact/XNVLidcThS8Sy3ZtLkURNR
 
 ## 次の一手
 - 実機で遊んだ感想からの手直し（コウキさんの感想待ち）
